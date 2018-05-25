@@ -1,0 +1,45 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+             <div class="card">
+              <div class="card-header">
+              <img class="avatar-small" src='{{ asset("images/avatar/$user->avatar") }}'>
+              {{ $user->name }}
+              @if($user->id != Auth::id())
+              <a class="btn-card-header" href="{{ route('user.follow',[$user->id]) }}">{{ $user->followed()->count() ? '取消关注' : '关注' }}</a>
+              @endif
+              </div>
+              <div class="card-body">
+              <a href="#answers" style="margin-right:20px">回答 {{ $user->answers->count() }}</a>
+              <a href="#questions">提问  {{ $user->questions->count() }}</a>
+              @if(Auth::id() != $user->id)
+              <a href="{{ route('message.read',[$user->id]) }}" class="btn-card-right">私信</a>
+              @endif
+              </div>
+             </div>
+
+               <div class="card" id="answers">
+                <div class="card-header">回答</div>
+                <div class="card-body">
+                @foreach($user->answers as $answer)
+                <p><a href="{{ route('question.show',[$answer->question->id]) }}">{{ $answer->question->title }}</a></p>
+                <p>{{ str_limit($answer->content,150) }}</p>
+                @endforeach
+                </div>
+            </div>
+            <div class="card" id="questions">
+                <div class="card-header">提问</div>
+                <div class="card-body">
+                @foreach($user->questions as $question)
+                <p><a href="{{ route('question.show',[$question->id]) }}">{{ $question->title }}</a></p>
+                <p>{{ str_limit($question->answer->content,150) }}</p>
+                @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
